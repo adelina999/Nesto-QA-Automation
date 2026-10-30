@@ -14,4 +14,8 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import "./commands";
+
+afterEach(function () {
+  //TODO: Add logic to run cleanup after each or all tests.
+});

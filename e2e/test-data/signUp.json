@@ -1,0 +1,28 @@
+[{
+    "name":"default",
+    "consent": true,
+    "country":"CA",
+    "province":"ON"
+},
+{
+    "name":"invalidEmail",
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "email": "invalid-email",
+    "password": "Password123!",
+    "confirmPassword": "Password123!",
+    "phone": "0987654321",
+    "consent": true
+},
+{
+    "name":"requiredFields",
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "password": "",
+    "confirmPassword": "",
+    "phone": "",
+     "country":"",
+    "province":"",
+    "consent": false
+}]
