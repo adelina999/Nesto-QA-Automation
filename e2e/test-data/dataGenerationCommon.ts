@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import type { SignupUser } from "../pages/SignupPage";
+import { canadianRegions } from "./canadianRegions";
 
 export type SignupUserOverrides = Partial<SignupUser>;
 
@@ -29,7 +30,7 @@ const generateCanadianPhoneNumber = (): string => {
 const generateEmail = (): string => {
   const baseEmail = faker.internet.email();
   const [localPart, domain] = baseEmail.split("@");
-  return `${localPart}+${faker.string.alphanumeric({ length: 3 })}@nesto.com`;
+  return `${localPart}${faker.string.alphanumeric({ length: 3 })}@nesto.com`;
 };
 
 export const createSignUpUserData = (
@@ -41,7 +42,7 @@ export const createSignUpUserData = (
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
     countryCode: "CA",
-    province: "ON",
+    province: canadianRegions[0].code,
     phone: generateCanadianPhoneNumber(),
     email: generateEmail(),
     password,

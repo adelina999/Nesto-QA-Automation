@@ -6,6 +6,8 @@
   "scripts": {
     "test": "cypress run",
     "cy:open": "cypress open",
+    "cy:open:english": "cypress open --env language=en",
+    "cy:open:french": "cypress open --env language=fr",
     "cy:run": "cypress run",
     "cy:run:headed": "cypress run --headed",
     "cy:run:chrome": "cypress run --browser chrome",

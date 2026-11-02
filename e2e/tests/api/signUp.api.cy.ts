@@ -22,6 +22,7 @@ describe("Sign Up API", () => {
     const userData = createSignUpUserData();
     const payload = toSignupCreationRequest(userData);
 
+    expect(userData.phone).to.have.length(10);
     createSignupAccount<SignupCreationResponse>(payload).then(
       ({ body, status }) => {
         expect(status).to.equal(201);
@@ -50,9 +51,22 @@ describe("Sign Up API", () => {
     },
   );
 
-  it(
-    "rejects account creation when email is missing/Bug in API",
-    { retries: 0 },
+  it("trims leading and trailing whitespace from names", { retries: 0 }, () => {
+    const userData = createSignUpUserData();
+    const payload = toSignupCreationRequest(userData);
+    payload.firstName = `  ${userData.firstName}  `;
+    payload.lastName = `\t${userData.lastName}\n`;
+
+    createSignupAccount<SignupCreationResponse>(payload).then(
+      ({ body, status }) => {
+        expect(status).to.equal(201);
+        expect(body.account.firstName).to.equal(userData.firstName);
+        expect(body.account.lastName).to.equal(userData.lastName);
+      },
+    );
+  });
+
+  it("rejects account creation when email is missing/Bug in API",{ retries: 0 },
     () => {
       const payload = toSignupCreationRequest(createSignUpUserData());
       payload.email = "";
@@ -68,8 +82,22 @@ describe("Sign Up API", () => {
     },
   );
 
-  it(
-    "rejects account creation when phone is missing/Bug in API",
+  it("rejects account creation when email contains only whitespace",{ retries: 0 },
+    () => {
+      const payload = toSignupCreationRequest(createSignUpUserData());
+      payload.email = " \t ";
+
+      createSignupAccount<SignupCreationErrorResponse>(payload, {
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.equal(422);
+        expect(response.body.error).to.match(/invalid parameters/i);
+        expect(response.body.parameters).to.include("email");
+      });
+    },
+  );
+
+  it("rejects account creation when phone is missing/Bug in API",
     { retries: 0 },
     () => {
       const payload = toSignupCreationRequest(createSignUpUserData());
@@ -84,8 +112,23 @@ describe("Sign Up API", () => {
     },
   );
 
-  it(
-    "rejects account creation when leadDistributeConsentAgreement is null/Bug in API",
+  it("rejects a phone number longer than the 10-digit Canadian input",
+    { retries: 0 },
+    () => {
+      const payload = toSignupCreationRequest(createSignUpUserData());
+      payload.phone = `${payload.phone}0`;
+
+      createSignupAccount<SignupCreationErrorResponse>(payload, {
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.equal(422);
+        expect(response.body.error).to.match(/invalid parameters/i);
+        expect(response.body.parameters).to.include("phone");
+      });
+    },
+  );
+
+  it("rejects account creation when leadDistributeConsentAgreement is null/Bug in API",
     { retries: 0 },
     () => {
       const payload = toSignupCreationRequest(createSignUpUserData());

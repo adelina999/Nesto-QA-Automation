@@ -148,6 +148,10 @@ export class SignupPage extends BasePage {
     return cy.get(this.selectors.validationMessages[field]);
   }
 
+  requestErrorAlert(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get('[role="alert"]');
+  }
+
   firstNameInput(): Cypress.Chainable<JQuery<HTMLInputElement>> {
     return cy.getByTestId<HTMLInputElement>(this.selectors.firstName);
   }

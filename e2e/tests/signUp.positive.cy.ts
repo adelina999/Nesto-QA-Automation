@@ -3,9 +3,10 @@ import type {
   SignupCreationResponse,
 } from "../api/signup.api";
 import { SignupPage } from "../pages/SignupPage";
+import { getCanadianRegionOptions } from "../test-data/canadianRegions";
 import { createSignUpUserData } from "../test-data/dataGenerationCommon";
 import { signupLanguages } from "../test-data/signupLanguages";
-import { getLanguage } from "../support/language";
+import { getLanguage, type Language } from "../support/language";
 
 const formatCanadianPhoneNumber = (phone: string): string => {
   const digits = phone.replace(/\D/g, "");
@@ -24,6 +25,31 @@ const formatCanadianPhoneNumber = (phone: string): string => {
 const toCanadianE164PhoneNumber = (phone: string): string => `+1${phone}`;
 
 describe("Sign Up Positive Tests", () => {
+  (["en", "fr"] as const satisfies readonly Language[]).forEach((language) => {
+    const locale = signupLanguages[language];
+
+    it(`shows all Canadian provinces and territories in ${locale.name} (${language})`, () => {
+      const signupPage = new SignupPage(language);
+
+      signupPage.visit();
+      signupPage.documentLanguage().should("eq", language);
+      signupPage
+        .provinceSelect()
+        .find("option")
+        .should(($options) => {
+          const options = Array.from($options, (option) => ({
+            value: option.value,
+            label: option.textContent?.trim() ?? "",
+          }));
+
+          expect(options).to.deep.equal([
+            { value: "", label: locale.provinceLabel },
+            ...getCanadianRegionOptions(language),
+          ]);
+        });
+    });
+  });
+
   const language = getLanguage();
   const locale = signupLanguages[language];
   it(
