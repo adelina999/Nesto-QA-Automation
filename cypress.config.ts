@@ -13,6 +13,15 @@ export default defineConfig({
     toConsole: true,
   },
   e2e: {
+    setupNodeEvents(_on, config) {
+      const language: unknown = config.env["language"] ?? "en";
+      if (language !== "en" && language !== "fr") {
+        throw new Error('Unsupported language. Use --env language=en or language=fr.');
+      }
+      // Language is public test configuration, exposed for synchronous use in specs.
+      config.expose = { ...config.expose, language };
+      return config;
+    },
     baseUrl: process.env["CYPRESS_BASE_URL"] || "https://app.qa.nesto.ca",
     specPattern: "e2e/**/*.cy.{js,ts}",
     supportFile: "e2e/support/e2e.ts",

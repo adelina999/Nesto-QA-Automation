@@ -1,11 +1,12 @@
-[{
-    "name":"default",
+[
+  {
+    "name": "default",
     "consent": true,
-    "country":"CA",
-    "province":"ON"
-},
-{
-    "name":"invalidEmail",
+    "country": "CA",
+    "province": "ON"
+  },
+  {
+    "name": "invalidEmail",
     "firstName": "Jane",
     "lastName": "Smith",
     "email": "invalid-email",
@@ -13,16 +14,67 @@
     "confirmPassword": "Password123!",
     "phone": "0987654321",
     "consent": true
-},
-{
-    "name":"requiredFields",
+  },
+  {
+    "name": "requiredFields",
     "firstName": "",
     "lastName": "",
     "email": "",
     "password": "",
     "confirmPassword": "",
     "phone": "",
-     "country":"",
-    "province":"",
+    "country": "",
+    "province": "",
     "consent": false
-}]
+  },
+   {
+    "name": "passwordMismatch",
+    "firstName": "Mike",
+    "lastName": "Johnson",
+    "email": "mike.johnson@example.com",
+    "password": "Password@one123!",
+    "confirmPassword": "Password@one123!Mismatch",
+    "phone": "4035562352",
+    "country": "CA",
+    "province": "ON",
+    "consent": false
+  },
+  {
+    "name": "longPassword",
+    "firstName": "Mike",
+    "lastName": "Johnson",
+    "email": "mike.johnson@example.com",
+    "password": "Password@one123!Password@one123!Password@one123!",
+    "confirmPassword": "Password@one123!Password@one123!Password@one123!",
+    "phone": "4035562352",
+    "country": "CA",
+    "province": "ON",
+    "consent": false
+  },
+    {
+    "name": "duplicateEmail",
+    "firstName": "Mike",
+    "lastName": "Johnson",
+    "email": "mollyg1@gmail.com",
+    "password": "Password@one123!!",
+    "confirmPassword": "Password@one123!!",
+    "phone": "4035562352",
+    "country": "CA",
+    "province": "ON",
+    "consent": false
+  }
+  ,
+      {
+    "name": "longPhone",
+    "firstName": "Mike",
+    "lastName": "Johnson",
+    "email": "mollyg1@gmail.com",
+    "password": "Password@one123!",
+    "confirmPassword": "Password@one123!",
+    "phone": "4035562352656566",
+    "country": "CA",
+    "province": "ON",
+    "consent": false
+  }
+
+]

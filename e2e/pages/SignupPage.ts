@@ -1,8 +1,10 @@
 import { BasePage } from "./BasePage";
+import { getLanguage, type Language } from "../support/language";
 
 export interface SignupUser {
   firstName: string;
   lastName: string;
+  // Optional initial selection; the app may update it from the phone area code.
   countryCode?: string;
   province: string;
   phone: string;
@@ -13,8 +15,8 @@ export interface SignupUser {
 }
 
 export class SignupPage extends BasePage {
-  constructor() {
-    super("/signup");
+  constructor(language: Language = getLanguage()) {
+    super("/signup", language);
   }
 
   private readonly selectors = {
@@ -39,37 +41,52 @@ export class SignupPage extends BasePage {
     consentMessage: "",
     createAccountButton: "submit-button",
     loginLink: '[data-testid="login-link"]',
+    validationMessages: {
+      firstName: '[data-testid="first-name-error-message-typography"] > span',
+      lastName: '[data-testid="last-name-error-message-typography"] > span',
+      phone: '[data-testid="phone-error-message-typography"] > span',
+      email: '[data-testid="email-error-message-typography"] > span',
+      password: '[data-testid="password-error-message-typography"] > span',
+      confirmPassword:
+        '[data-testid="passwordConfirmation-error-message-typography"] > span',
+    },
   } as const;
 
-  populateForm(data: SignupUser): Cypress.Chainable<JQuery<HTMLElement>> {
-    cy.getByTestId(this.selectors.province).select(data.province);
-
-    if (data.firstName) {
-      cy.typeInInput(this.selectors.firstName, data.firstName);
-    }
-
-    if (data.lastName) {
-      cy.typeInInput(this.selectors.lastName, data.lastName);
-    }
-
-    if (data.phone) {
-      cy.typeInInput(this.selectors.phone, data.phone);
-    }
-
-    if (data.countryCode) {
+  // Omitted fields stay untouched; "" clears inputs or selects an empty option.
+  populateForm(data: Partial<SignupUser>): Cypress.Chainable<JQuery<HTMLElement>> {
+    if (data.countryCode !== undefined) {
       cy.get(this.selectors.countryCode).select(data.countryCode);
     }
 
-    if (data.email) {
+    // Phone entry may update the initial country selection from its area code.
+    if (data.phone !== undefined) {
+      cy.typeInInput(this.selectors.phone, data.phone);
+    }
+
+    if (data.firstName !== undefined) {
+      cy.typeInInput(this.selectors.firstName, data.firstName);
+    }
+
+    if (data.lastName !== undefined) {
+      cy.typeInInput(this.selectors.lastName, data.lastName);
+    }
+
+    if (data.email !== undefined) {
       cy.typeInInput(this.selectors.email, data.email);
     }
 
-    if (data.password) {
+    if (data.password !== undefined) {
       cy.typeInInput(this.selectors.password, data.password);
     }
 
-    if (data.confirmPassword) {
+    if (data.confirmPassword !== undefined) {
       cy.typeInInput(this.selectors.confirmPassword, data.confirmPassword);
+    }
+
+    // Set the region after phone and the other form updates so those
+    // updates cannot reset the selection before submission.
+    if (data.province !== undefined) {
+      cy.getByTestId(this.selectors.province).select(data.province);
     }
 
     if (data.consent === true) {
@@ -84,7 +101,49 @@ export class SignupPage extends BasePage {
   }
 
   submitSignup(): Cypress.Chainable<JQuery<HTMLElement>> {
-    return cy.getByTestId(this.selectors.createAccountButton).click();
+    return this.submitButton().click();
+  }
+
+  submitButton(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.getByTestId(this.selectors.createAccountButton);
+  }
+
+  firstNameLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(this.selectors.firstNameLabel);
+  }
+
+  lastNameLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(this.selectors.lastNameLabel);
+  }
+
+  phoneLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(this.selectors.phoneLabel);
+  }
+
+  provinceLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(this.selectors.provinceLabel);
+  }
+
+  emailLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(this.selectors.emailLabel);
+  }
+
+  passwordLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(this.selectors.passwordLabel);
+  }
+
+  confirmPasswordLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(this.selectors.confirmPasswordLabel);
+  }
+
+  consentLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get('label[for="leadDistributeConsentAgreement"]');
+  }
+
+  validationMessage(
+    field: keyof SignupPage["selectors"]["validationMessages"],
+  ): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(this.selectors.validationMessages[field]);
   }
 
   firstNameInput(): Cypress.Chainable<JQuery<HTMLInputElement>> {

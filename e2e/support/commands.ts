@@ -46,6 +46,6 @@ Cypress.Commands.add(
     const input = cy.getByTestId(testId);
     const preparedInput = clearExistingValue ? input.clear() : input;
 
-    return preparedInput.type(value);
+    return value === "" ? preparedInput : preparedInput.type(value);
   },
 );

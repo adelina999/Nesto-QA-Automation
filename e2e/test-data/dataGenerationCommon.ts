@@ -1,14 +1,7 @@
 import { faker } from "@faker-js/faker";
 import type { SignupUser } from "../pages/SignupPage";
 
-export interface SignupUserOverrides extends Partial<SignupUser> {
-  country?: string;
-  name?: string;
-}
-
-export interface SignupScenario extends SignupUserOverrides {
-  name: string;
-}
+export type SignupUserOverrides = Partial<SignupUser>;
 
 export const generatePassword = (length = 14): string => {
   if (!Number.isInteger(length) || length < 12 || length > 32) {
@@ -33,22 +26,27 @@ const generateCanadianPhoneNumber = (): string => {
   return `${areaCode}${exchangeCode}${faker.string.numeric(4)}`;
 };
 
+const generateEmail = (): string => {
+  const baseEmail = faker.internet.email();
+  const [localPart, domain] = baseEmail.split("@");
+  return `${localPart}+${faker.string.alphanumeric({ length: 3 })}@nesto.com`;
+};
+
 export const createSignUpUserData = (
   overrides: SignupUserOverrides = {},
 ): SignupUser => {
-  const { name: _name, country, ...userOverrides } = overrides;
-  const password = userOverrides.password ?? generatePassword();
+  const password = overrides.password ?? generatePassword();
 
   return {
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
-    countryCode: country ?? "CA",
+    countryCode: "CA",
     province: "ON",
     phone: generateCanadianPhoneNumber(),
-    email: faker.internet.email(),
+    email: generateEmail(),
     password,
-    confirmPassword: userOverrides.confirmPassword ?? password,
+    confirmPassword: overrides.confirmPassword ?? password,
     consent: true,
-    ...userOverrides,
+    ...overrides,
   };
 };
