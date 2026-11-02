@@ -1,27 +1,11 @@
+import type {
+  SignupCreationRequest,
+  SignupCreationResponse,
+} from "../api/signup.api";
 import { SignupPage } from "../pages/SignupPage";
 import { createSignUpUserData } from "../test-data/dataGenerationCommon";
 import { signupLanguages } from "../test-data/signupLanguages";
 import { getLanguage } from "../support/language";
-
-interface SignupCreationRequest {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  region: string;
-  leadDistributeConsentAgreement: boolean;
-}
-
-interface SignupCreationResponse {
-  account: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    region: string;
-    leadDistributeConsentAgreement: boolean;
-  };
-}
 
 const formatCanadianPhoneNumber = (phone: string): string => {
   const digits = phone.replace(/\D/g, "");

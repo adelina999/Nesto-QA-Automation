@@ -53,7 +53,9 @@ export class SignupPage extends BasePage {
   } as const;
 
   // Omitted fields stay untouched; "" clears inputs or selects an empty option.
-  populateForm(data: Partial<SignupUser>): Cypress.Chainable<JQuery<HTMLElement>> {
+  populateForm(
+    data: Partial<SignupUser>,
+  ): Cypress.Chainable<JQuery<HTMLElement>> {
     if (data.countryCode !== undefined) {
       cy.get(this.selectors.countryCode).select(data.countryCode);
     }
