@@ -14,20 +14,23 @@ jobs:
     env:
       CYPRESS_BASE_URL: ${{ vars.CYPRESS_BASE_URL }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npm run typecheck
-      - run: npm run cy:run
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-results
-          path: |
-            e2e/reports
-            e2e/screenshots
-          if-no-files-found: ignore
+      - name: Checkout repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git init repo
+          git -C repo remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          auth_header="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -C repo -c http.extraheader="AUTHORIZATION: basic ${auth_header}" fetch --depth=1 origin "$GITHUB_REF"
+          git -C repo checkout --detach FETCH_HEAD
+      - name: Check Node.js version
+        run: node --version
+      - name: Install dependencies
+        working-directory: repo
+        run: npm ci
+      - name: Typecheck
+        working-directory: repo
+        run: npm run typecheck
+      - name: Run Cypress
+        working-directory: repo
+        run: npm run cy:run
