@@ -21,6 +21,7 @@
     "@faker-js/faker": "^10.6.0",
     "@types/node": "^24.19.2",
     "cypress": "^16.2.1",
+    "mochawesome": "^8.1.1",
     "typescript": "^7.0.2"
   }
 }

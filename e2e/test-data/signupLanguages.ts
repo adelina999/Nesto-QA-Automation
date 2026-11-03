@@ -6,6 +6,8 @@ export const signupLanguages = {
   en: {
     name: "English",
     path: "/signup",
+    accountHeading: "Create a nesto account",
+    loginButton: "Login",
     firstNameLabel: "First name",
     lastNameLabel: "Last name",
     phoneLabel: "Phone number",
@@ -27,6 +29,8 @@ export const signupLanguages = {
   fr: {
     name: "French",
     path: "/fr/signup",
+    accountHeading: "Créez un compte nesto",
+    loginButton: "Connexion",
     firstNameLabel: "Prénom",
     lastNameLabel: "Nom",
     phoneLabel: "Téléphone",
@@ -50,6 +54,8 @@ export const signupLanguages = {
   {
     name: string;
     path: string;
+    accountHeading: string;
+    loginButton: string;
     firstNameLabel: string;
     lastNameLabel: string;
     phoneLabel: string;

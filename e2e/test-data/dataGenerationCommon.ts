@@ -10,7 +10,7 @@ export const generatePassword = (length = 14): string => {
       "Password length must be between 12 and 32 characters.",
     );
   }
-
+  //There is no clear requirement for special characters so we don't use them
   const uppercase = faker.string.alpha({ length: 3, casing: "upper" });
   const lowercase = faker.string.alpha({ length: 3, casing: "lower" });
   const digits = faker.string.numeric({ length: 3 });
@@ -21,13 +21,21 @@ export const generatePassword = (length = 14): string => {
 };
 
 const generateCanadianPhoneNumber = (): string => {
-  const areaCode = faker.helpers.arrayElement(["416", "437", "647"]);
+  //we use real canadian area code to make sure country identified as Canada
+  const areaCode = faker.helpers.arrayElement([
+    "416",
+    "437",
+    "647",
+    "403",
+    "587",
+  ]);
   const exchangeCode = `${faker.helpers.arrayElement("23456789".split(""))}${faker.string.numeric(2)}`;
 
   return `${areaCode}${exchangeCode}${faker.string.numeric(4)}`;
 };
 
 const generateEmail = (): string => {
+  //this method generate a fake email, to make sure we don't use real email we modify the domain and the local part
   const baseEmail = faker.internet.email();
   const [localPart, domain] = baseEmail.split("@");
   return `${localPart}${faker.string.alphanumeric({ length: 3 })}@nesto.com`;

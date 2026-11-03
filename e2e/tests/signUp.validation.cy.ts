@@ -12,6 +12,19 @@ describe("Sign Up Validation Tests", () => {
       signupPage.documentLanguage().should("eq", language);
 
       signupPage
+        .nestoLogo()
+        .should("be.visible")
+        .and("have.attr", "alt", "nesto");
+      signupPage
+        .accountHeading()
+        .should("be.visible")
+        .and("have.text", locale.accountHeading);
+      signupPage
+        .headerLoginButton()
+        .should("be.visible")
+        .and("have.text", locale.loginButton);
+
+      signupPage
         .firstNameLabel()
         .should("be.visible")
         .and("have.text", locale.firstNameLabel);

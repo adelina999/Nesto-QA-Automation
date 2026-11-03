@@ -20,6 +20,9 @@ export class SignupPage extends BasePage {
   }
 
   private readonly selectors = {
+    nestoLogo: 'img[alt="nesto"]',
+    accountHeading: "h2",
+    headerLoginButton: "header-login-button",
     firstName: "first-name-input",
     firstNameLabel: '[data-testid="first-name-input-placeholder"]',
     lastName: "last-name-input",
@@ -108,6 +111,18 @@ export class SignupPage extends BasePage {
 
   submitButton(): Cypress.Chainable<JQuery<HTMLElement>> {
     return cy.getByTestId(this.selectors.createAccountButton);
+  }
+
+  nestoLogo(): Cypress.Chainable<JQuery<HTMLImageElement>> {
+    return cy.get<HTMLImageElement>(this.selectors.nestoLogo);
+  }
+
+  accountHeading(): Cypress.Chainable<JQuery<HTMLHeadingElement>> {
+    return cy.get<HTMLHeadingElement>(this.selectors.accountHeading);
+  }
+
+  headerLoginButton(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.getByTestId(this.selectors.headerLoginButton);
   }
 
   firstNameLabel(): Cypress.Chainable<JQuery<HTMLElement>> {

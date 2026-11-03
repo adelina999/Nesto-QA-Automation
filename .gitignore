@@ -1,4 +1,23 @@
+# Ignore node_modules 
 node_modules/
+
+# Ignore build output
 e2e/videos
 e2e/downloads/
+e2e/screenshots
+e2e/reports/
+
+cypress/screenshots
+# Environment variables file
 .env
+
+# GitHub directory
+.github/
+!.github/
+.github/*
+!.github/workflows/
+
+
+
+#Editor directories and files
+.vscode/

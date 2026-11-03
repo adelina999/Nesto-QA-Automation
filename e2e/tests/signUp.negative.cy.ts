@@ -1,7 +1,7 @@
 import { SignupPage, type SignupUser } from "../pages/SignupPage";
 import { createSignUpUserData } from "../test-data/dataGenerationCommon";
 import { signupLanguages } from "../test-data/signupLanguages";
-import { getLanguage, type Language } from "../support/language";
+import type { Language } from "../support/language";
 
 interface SignupScenarioFixture extends Partial<SignupUser> {
   name: string;
@@ -96,8 +96,7 @@ const assertValidationError = (
     .and("have.text", signupLanguages[language].validation[error]);
 };
 
-describe("Sign Up Negative Tests", () => {
-  const language = getLanguage();
+const defineNegativeTestsForLanguage = (language: Language): void => {
   const locale = signupLanguages[language];
 
   missingFieldCases.forEach(({ name, field, overrides, error }) => {
@@ -188,7 +187,7 @@ describe("Sign Up Negative Tests", () => {
       signupPage
         .validationMessage("confirmPassword")
         .should("be.visible")
-        .and("not.be.empty");
+        .and("have.text", locale.validation.passwordMismatch);
       assertSubmissionWasBlocked(language);
     },
   );
@@ -346,5 +345,11 @@ describe("Sign Up Negative Tests", () => {
       );
       assertSubmissionWasBlocked(language);
     },
+  );
+};
+
+describe("Sign Up Negative Tests", () => {
+  (["en", "fr"] as const satisfies readonly Language[]).forEach(
+    defineNegativeTestsForLanguage,
   );
 });
