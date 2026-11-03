@@ -4,7 +4,10 @@ import type {
 } from "../api/signup.api";
 import { SignupPage } from "../pages/SignupPage";
 import { getCanadianRegionOptions } from "../test-data/canadianRegions";
-import { createSignUpUserData } from "../test-data/dataGenerationCommon";
+import {
+  createFrenchSignUpUserData,
+  createSignUpUserData,
+} from "../test-data/dataGenerationCommon";
 import { signupLanguages } from "../test-data/signupLanguages";
 import { getLanguage, type Language } from "../support/language";
 
@@ -129,6 +132,39 @@ describe("Sign Up Positive Tests", () => {
       //curently the API is returning a 201 with the same path as the signup page, but it should be returning a 302 redirect to the login page. This is a bug in the API that needs to be fixed.
       // cy.location("pathname").should("not.eq", locale.path);
       // cy.get("main").should("be.visible");
+    },
+  );
+
+  it(
+    "creates an account with French Faker data and an accented email in French (fr)",
+    { retries: 0 },
+    () => {
+      const userData = createFrenchSignUpUserData();
+      const signupPage = new SignupPage("fr");
+
+      expect(userData.email.split("@")[0]).to.match(/[àâäéèêëîïôöùûüÿçœæ]/i);
+      cy.intercept("POST", "**/api/accounts").as("signupCreation");
+
+      signupPage.visit();
+      signupPage.documentLanguage().should("eq", "fr");
+      signupPage.populateForm(userData);
+      signupPage.submitSignup();
+
+      cy.wait<SignupCreationRequest, SignupCreationResponse>(
+        "@signupCreation",
+      ).then(({ request, response }) => {
+        expect(response, "signup response").to.exist;
+
+        if (!response) {
+          throw new Error("Signup request completed without an HTTP response.");
+        }
+
+        expect(response.statusCode).to.equal(201);
+        expect(request.body.firstName).to.equal(userData.firstName);
+        expect(request.body.lastName).to.equal(userData.lastName);
+        expect(request.body.email).to.equal(userData.email);
+        expect(response.body.account.email).to.equal(userData.email);
+      });
     },
   );
 });

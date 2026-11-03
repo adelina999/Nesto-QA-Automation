@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+import { faker, fakerFR } from "@faker-js/faker";
 import type { SignupUser } from "../pages/SignupPage";
 import { canadianRegions } from "./canadianRegions";
 
@@ -58,4 +58,23 @@ export const createSignUpUserData = (
     consent: true,
     ...overrides,
   };
+};
+
+export const createFrenchSignUpUserData = (
+  overrides: SignupUserOverrides = {},
+): SignupUser => {
+  const firstName = overrides.firstName ?? fakerFR.person.firstName();
+  const lastName = overrides.lastName ?? fakerFR.person.lastName();
+  const emailLocalPart = `${firstName}.${lastName}${fakerFR.string.alphanumeric(
+    3,
+  )}é`
+    .toLocaleLowerCase("fr")
+    .replace(/[^\p{L}\p{N}.]/gu, "");
+
+  return createSignUpUserData({
+    ...overrides,
+    firstName,
+    lastName,
+    email: overrides.email ?? `${emailLocalPart}@nesto.com`,
+  });
 };
