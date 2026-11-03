@@ -54,8 +54,11 @@ $env:CYPRESS_BASE_URL = "https://your-qa-environment.example"
 npm run cy:run
 ```
 
-The GitHub Actions QA workflow uses the `QA` environment and passes its
-`CYPRESS_BASE_URL` variable to Cypress.
+The GitHub Actions QA workflow is integrated and runs on demand. It uses the
+`QA` environment, passes its `CYPRESS_BASE_URL` variable to Cypress, and runs
+the TypeScript check before the Cypress suite. Cypress test failures do not
+stop the workflow from finishing. At this time, the workflow does not attach or
+publish test reports as run artifacts.
 
 The project does not automatically load `.env` files. Do not commit credentials
 or other secrets.
@@ -88,20 +91,18 @@ The Cypress suite currently covers:
   email, phone, province, and consent inputs.
 - **Smoke test:** confirms the application loads using the selected language.
 
-Run all specs with `npm test`, or select a UI language with
+Run all specs locally with `npm test`, or select a UI language with
 `--env language=en` or `--env language=fr` as shown above. The negative signup
 and request-recovery specs generate cases for both languages in the same run;
 the other locale-sensitive specs use the selected language. Some negative
 scenarios are intended to expose known application/API validation issues and
-may fail against the current QA environment. The GitHub Actions QA workflow
-can be started manually and runs the full suite plus the TypeScript typecheck.
+may fail against the current QA environment.
 
 Cypress writes timestamped HTML reports per spec to `e2e/reports/`, and failure
-screenshots to `e2e/screenshots/`. The QA GitHub Actions workflow continues
-after Cypress test failures so the run can finish; earlier setup or typecheck
-failures still stop the workflow. Reports are named with the run status and
-spec name. These output folders are ignored by Git; if they are hidden in VS
-Code, disable **Explorer: Exclude Git Ignore** or list reports in PowerShell:
+screenshots to `e2e/screenshots/` when running locally. Reports are named with
+the run status and spec name. These output folders are ignored by Git; if they
+are hidden in VS Code, disable **Explorer: Exclude Git Ignore** or list reports
+in PowerShell:
 
 ```powershell
 Get-ChildItem e2e\reports\*.html
