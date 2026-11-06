@@ -12,10 +12,7 @@ cypress/screenshots
 .env
 
 # GitHub directory
-.github/
-!.github/
-.github/*
-!.github/workflows/
+
 
 
 
