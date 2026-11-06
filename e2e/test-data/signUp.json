@@ -27,7 +27,7 @@
     "province": "",
     "consent": false
   },
-   {
+  {
     "name": "passwordMismatch",
     "firstName": "Mike",
     "lastName": "Johnson",
@@ -51,7 +51,7 @@
     "province": "ON",
     "consent": false
   },
-    {
+  {
     "name": "duplicateEmail",
     "firstName": "Mike",
     "lastName": "Johnson",
@@ -62,9 +62,8 @@
     "country": "CA",
     "province": "ON",
     "consent": false
-  }
-  ,
-      {
+  },
+  {
     "name": "longPhone",
     "firstName": "Mike",
     "lastName": "Johnson",
@@ -76,5 +75,4 @@
     "province": "ON",
     "consent": false
   }
-
 ]

@@ -41,7 +41,7 @@ in one run. For specs that use the selected language, choose English (default)
 or French with `--env language=en` or `--env language=fr`:
 
 ```powershell
-npm run cy:run -- --env language=fr --spec "e2e/tests/signUp.validation.cy.ts"
+npm run cy:run -- --env language=fr --spec "e2e/tests/signUp.negative.cy.ts"
 ```
 
 ## Configuration and project layout

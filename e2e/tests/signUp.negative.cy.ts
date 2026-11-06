@@ -142,8 +142,10 @@ const defineNegativeTestsForLanguage = (language: Language): void => {
           .validationMessage(field)
           .should("be.visible")
           .should(($message) => {
-            expect($message.text().trim(), `${name} validation message`).not.to
-              .equal("");
+            expect(
+              $message.text().trim(),
+              `${name} validation message`,
+            ).not.to.equal("");
           });
         assertSubmissionWasBlocked(language);
       },
@@ -316,9 +318,8 @@ const defineNegativeTestsForLanguage = (language: Language): void => {
     },
   );
 
-  
   it(
-    `use existing email for signup should display the right error in ${locale.name} (${language})/Currently this test is failing because the API is not returning the right error message`,
+    `use existing email for signup should display the right error in ${locale.name} (${language})/*BUG Currently this test is failing as the ui doesn't display the error and only api return general error`,
     { retries: 0 },
     () => {
       const signupPage = visitSignupWithCreationGuard(language);
@@ -335,31 +336,22 @@ const defineNegativeTestsForLanguage = (language: Language): void => {
             throw new Error("Missing longPassword signup scenario.");
           }
           signupPage.populateForm(scenario);
-          
         },
       );
       signupPage.submitSignup();
-      assertValidationError(
-        signupPage,
-        "email",
-        "duplicateEmail",
-        language,
-      );
+      assertValidationError(signupPage, "email", "duplicateEmail", language);
       assertSubmissionWasBlocked(language);
     },
   );
 
-    
   it(
-    `use phone number longer than 10 digits for signup should display the right error in ${locale.name} (${language})/Currently we are able to create an account with wrong phone number and account is created`,
+    `use phone number longer than 10 digits for signup should display the right error in ${locale.name} (${language})/BUG Currently we are able to create an account with wrong phone number and account is created`,
     { retries: 0 },
     () => {
       const signupPage = visitSignupWithCreationGuard(language);
       cy.readFile<SignupScenarioFixture[]>("e2e/test-data/signUp.json").then(
         (scenarios) => {
-          const scenario = scenarios.find(
-            ({ name }) => name === "longPhone",
-          );
+          const scenario = scenarios.find(({ name }) => name === "longPhone");
           if (
             !scenario ||
             typeof scenario.password !== "string" ||
@@ -368,16 +360,10 @@ const defineNegativeTestsForLanguage = (language: Language): void => {
             throw new Error("Missing longPhone signup scenario.");
           }
           signupPage.populateForm(scenario);
-          
         },
       );
       signupPage.submitSignup();
-      assertValidationError(
-        signupPage,
-        "phone",
-        "invalidPhone",
-        language,
-      );
+      assertValidationError(signupPage, "phone", "invalidPhone", language);
       assertSubmissionWasBlocked(language);
     },
   );
@@ -387,4 +373,87 @@ describe("Sign Up Negative Tests", () => {
   (["en", "fr"] as const satisfies readonly Language[]).forEach(
     defineNegativeTestsForLanguage,
   );
+});
+
+describe("Sign Up Validation Tests", () => {
+  (["en", "fr"] as const satisfies readonly Language[]).forEach((language) => {
+    const locale = signupLanguages[language];
+
+    it(`shows visible labels and validation messages in ${locale.name} (${language})`, () => {
+      const signupPage = visitSignupWithCreationGuard(language);
+
+      signupPage.documentLanguage().should("eq", language);
+
+      signupPage
+        .nestoLogo()
+        .should("be.visible")
+        .and("have.attr", "alt", "nesto");
+      signupPage
+        .accountHeading()
+        .should("be.visible")
+        .and("have.text", locale.accountHeading);
+      signupPage
+        .headerLoginButton()
+        .should("be.visible")
+        .and("have.text", locale.loginButton);
+
+      signupPage
+        .firstNameLabel()
+        .should("be.visible")
+        .and("have.text", locale.firstNameLabel);
+      signupPage
+        .lastNameLabel()
+        .should("be.visible")
+        .and("have.text", locale.lastNameLabel);
+      signupPage
+        .phoneLabel()
+        .should("be.visible")
+        .and("have.text", locale.phoneLabel);
+      signupPage
+        .provinceLabel()
+        .should("be.visible")
+        .and("have.text", locale.provinceLabel);
+      signupPage
+        .emailLabel()
+        .should("be.visible")
+        .and("have.text", locale.emailLabel);
+      signupPage
+        .passwordLabel()
+        .should("be.visible")
+        .and("have.text", locale.passwordLabel);
+      signupPage
+        .confirmPasswordLabel()
+        .should("be.visible")
+        .and("have.text", locale.confirmPasswordLabel);
+      signupPage.consentLabel().should("be.visible").and("not.be.empty");
+      signupPage
+        .submitButton()
+        .should("be.visible")
+        .and("have.text", locale.submit);
+
+      signupPage.submitSignup();
+
+      signupPage
+        .validationMessage("firstName")
+        .should("be.visible")
+        .and("have.text", locale.validation.required);
+      signupPage
+        .validationMessage("lastName")
+        .should("be.visible")
+        .and("have.text", locale.validation.required);
+      signupPage
+        .validationMessage("phone")
+        .should("be.visible")
+        .and("have.text", locale.validation.invalidPhone);
+      signupPage
+        .validationMessage("email")
+        .should("be.visible")
+        .and("have.text", locale.validation.invalidEmail);
+      signupPage
+        .validationMessage("password")
+        .should("be.visible")
+        .and("have.text", locale.validation.invalidMinPassword);
+      assertSubmissionWasBlocked(language);
+    });
+  });
 });

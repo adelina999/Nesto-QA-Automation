@@ -66,13 +66,14 @@ describe("Sign Up Positive Tests", () => {
   const language = getLanguage();
   const locale = signupLanguages[language];
   it(
-    `creates an account with Faker data in ${locale.name} (${language})`,
+    `creates and authenticates an account in ${locale.name} (${language})`,
     { retries: 0 },
     () => {
       const userData = createSignUpUserData();
       const signupPage = new SignupPage();
 
       cy.intercept("POST", "**/api/accounts").as("signupCreation");
+      cy.intercept("POST", "**/co/authenticate").as("authenticate");
 
       signupPage.visit();
       signupPage.documentLanguage().should("eq", language);
@@ -139,16 +140,21 @@ describe("Sign Up Positive Tests", () => {
         );
       });
 
-      //curently the API is returning a 201 with the same path as the signup page, but it is not being redirected tothe account page, so we can't verify the login,
-      // we will verify the login by opening the login page and logging in with the same credentials
+      cy.wait("@authenticate").then(({ response }) => {
+        expect(response, "authentication response").to.exist;
 
-      // cy.location("pathname").should("not.eq", locale.path);
-      // cy.get("main").should("be.visible");
+        if (!response) {
+          throw new Error(
+            "Authentication request completed without an HTTP response.",
+          );
+        }
 
-      signupPage.visit();
-      signupPage.openLogin();
-      new LoginPage().loginWith(userData.email, userData.password);
+        expect(response.statusCode).to.equal(200);
+      });
+
       cy.location("origin").should("eq", getApplicationOrigin());
+      cy.location("pathname").should("eq", "/getaquote");
+      cy.get("main").should("be.visible");
     },
   );
 

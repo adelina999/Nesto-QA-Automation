@@ -11,7 +11,9 @@
     "cy:run": "cypress run",
     "cy:run:headed": "cypress run --headed",
     "cy:run:chrome": "cypress run --browser chrome",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "format": "prettier --write \"e2e/**/*.{ts,js,json}\" \"cypress.config.ts\" \"README.md\" \"package.json\" \"tsconfig.json\"",
+    "format:check": "prettier --check \"e2e/**/*.{ts,js,json}\" \"cypress.config.ts\" \"README.md\" \"package.json\" \"tsconfig.json\""
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
     "@types/node": "^24.19.2",
     "cypress": "^16.2.1",
     "mochawesome": "^8.1.1",
+    "prettier": "^3.9.10",
     "typescript": "^7.0.2"
   }
 }

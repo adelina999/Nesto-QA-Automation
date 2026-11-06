@@ -18,7 +18,9 @@ export default defineConfig({
     setupNodeEvents(_on, config) {
       const language: unknown = config.env["language"] ?? "en";
       if (language !== "en" && language !== "fr") {
-        throw new Error('Unsupported language. Use --env language=en or language=fr.');
+        throw new Error(
+          "Unsupported language. Use --env language=en or language=fr.",
+        );
       }
       // Language is public test configuration, exposed for synchronous use in specs.
       config.expose = { ...config.expose, language };

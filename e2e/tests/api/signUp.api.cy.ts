@@ -46,7 +46,7 @@ describe("Sign Up API", () => {
       createSignupAccount<unknown>(payload, {
         failOnStatusCode: false,
       }).then(({ status }) => {
-        expect(status).to.equal(400);
+        expect(status).to.equal(422);
       });
     },
   );
@@ -66,7 +66,9 @@ describe("Sign Up API", () => {
     );
   });
 
-  it("rejects account creation when email is missing/Bug in API",{ retries: 0 },
+  it(
+    "rejects account creation when email is missing/Bug in API",
+    { retries: 0 },
     () => {
       const payload = toSignupCreationRequest(createSignUpUserData());
       payload.email = "";
@@ -82,7 +84,9 @@ describe("Sign Up API", () => {
     },
   );
 
-  it("rejects account creation when email contains only whitespace",{ retries: 0 },
+  it(
+    "rejects account creation when email contains only whitespace",
+    { retries: 0 },
     () => {
       const payload = toSignupCreationRequest(createSignUpUserData());
       payload.email = " \t ";
@@ -97,7 +101,8 @@ describe("Sign Up API", () => {
     },
   );
 
-  it("rejects account creation when phone is missing/Bug in API",
+  it(
+    "rejects account creation when phone is missing/BUG Currently we are able to create an account without a phone number and account is created",
     { retries: 0 },
     () => {
       const payload = toSignupCreationRequest(createSignUpUserData());
@@ -112,7 +117,8 @@ describe("Sign Up API", () => {
     },
   );
 
-  it("rejects a phone number longer than the 10-digit Canadian input",
+  it(
+    "rejects a phone number longer than the 10-digit Canadian input/BUG Currently we are able to create an account with wrong phone number and account is created",
     { retries: 0 },
     () => {
       const payload = toSignupCreationRequest(createSignUpUserData());
@@ -128,7 +134,8 @@ describe("Sign Up API", () => {
     },
   );
 
-  it("rejects account creation when leadDistributeConsentAgreement is null/Bug in API",
+  it(
+    "rejects account creation when leadDistributeConsentAgreement is null/Bug in API",
     { retries: 0 },
     () => {
       const payload = toSignupCreationRequest(createSignUpUserData());
