@@ -63,35 +63,50 @@ npm run cy:run -- --env language=fr --spec "e2e/tests/signUp.negative.cy.ts"
 
 ## Configuration and project layout
 
-Override the default application URL by setting `CYPRESS_BASE_URL` in the
-shell before running Cypress. For example:
+The Cypress configuration is in `cypress.config.ts`. By default, Cypress
+targets `https://app.qa.nesto.ca`; override it by setting `CYPRESS_BASE_URL`
+before running a test:
 
 ```powershell
 $env:CYPRESS_BASE_URL = "https://your-qa-environment.example"
 npm run cy:run
 ```
 
-The GitHub Actions QA workflow is integrated and runs on demand. It uses the
-`QA` environment, passes its `CYPRESS_BASE_URL` variable to Cypress, and runs
-the TypeScript check before the Cypress suite. Cypress test failures do not
-stop the workflow from finishing. At this time, the workflow does not attach or
-publish test reports as run artifacts.
+To generate a merged Mochawesome report, explicitly run
+`npm run cy:run:report -- [Cypress options]`, such as
+`npm run cy:run:report -- --spec "e2e/tests/smoke.cy.ts"`. This is a headless
+run; regular Cypress commands do not generate reports. JSON and HTML output is
+written under a unique `e2e/reports/` run folder. Headed runs use Cypress's
+standard reporter.
 
-The project does not automatically load `.env` files. Do not commit credentials
-or other secrets.
+The project does not automatically load `.env` files. Set environment
+variables in your shell or CI environment, and do not commit credentials or
+other secrets.
+
+See [assumptions](./ASSUMPTIONS.md) and [known bugs](./BUGS.md).
 
 ```text
+cypress.config.ts
+scripts/
+  run-cypress-with-report.cjs  Optional headless test runner with report merging
 e2e/
-  api/             Signup API helper and request/response types
-  pages/           Base and signup page objects
+  api/             API helpers
+  pages/           Page objects
   support/         Cypress setup, commands, and language configuration
   test-data/       Signup inputs, generated data, Canadian regions, and locales
   tests/
-    api/           Signup endpoint specs
-    *.cy.ts        Signup UI, smoke, and request-recovery specs
-  reports/         Generated Mochawesome JSON and merged HTML reports (git-ignored)
-  screenshots/     Screenshots from failed Cypress tests (git-ignored)
+    api/           API specs
+    *.cy.ts        UI and smoke specs
+  reports/         Opt-in Mochawesome JSON and merged HTML output (git-ignored)
+  screenshots/     Screenshots from failed tests (git-ignored)
+.github/
+  workflows/       On-demand QA workflow
 ```
+
+The GitHub Actions QA workflow uses the `QA` environment, passes its
+`CYPRESS_BASE_URL` variable to Cypress, and runs the TypeScript check before
+the suite. Cypress failures do not stop the workflow from finishing. Reports
+are not currently attached or published as workflow artifacts.
 
 ## Test coverage
 
@@ -115,10 +130,9 @@ the other locale-sensitive specs use the selected language. Some negative
 scenarios are intended to expose known application/API validation issues and
 may fail against the current QA environment.
 
-Cypress writes a JSON report per spec during headless runs, then merges those
-reports into one HTML report for that run. Each report is saved in its own
-timestamped folder under `e2e/reports/`. Headed runs use Cypress's spec reporter
-and do not generate Mochawesome reports. Failure screenshots are saved to
+Cypress writes per-spec JSON reports and merges them into one HTML report only
+when run with `cy:run:report`. Each report is saved in its own timestamped
+folder under `e2e/reports/`. Failure screenshots are saved to
 `e2e/screenshots/`. These output folders are ignored by Git; if they are hidden
 in VS Code, disable **Explorer: Exclude Git Ignore** or list reports in
 PowerShell:
