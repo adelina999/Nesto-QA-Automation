@@ -6,14 +6,18 @@
   "scripts": {
     "test": "cypress run",
     "cy:open": "cypress open",
+    "cy:open:browser": "cypress open",
     "cy:open:english": "cypress open --env language=en",
     "cy:open:french": "cypress open --env language=fr",
     "cy:run": "cypress run",
+    "cy:run:spec": "cypress run",
     "cy:run:headed": "cypress run --headed",
+    "cy:run:headed:spec": "cypress run --headed",
+    "cy:run:browser": "cypress run",
     "cy:run:chrome": "cypress run --browser chrome",
+    "cy:run:report": "node scripts/run-cypress-with-report.cjs --report",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "format": "prettier --write \"e2e/**/*.{ts,js,json}\" \"cypress.config.ts\" \"README.md\" \"package.json\" \"tsconfig.json\"",
-    "format:check": "prettier --check \"e2e/**/*.{ts,js,json}\" \"cypress.config.ts\" \"README.md\" \"package.json\" \"tsconfig.json\""
+    "prettier": "prettier --write \"**/*.{js,ts,json,md}\""
   },
   "keywords": [],
   "author": "",
@@ -24,6 +28,8 @@
     "@types/node": "^24.19.2",
     "cypress": "^16.2.1",
     "mochawesome": "^8.1.1",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
     "prettier": "^3.9.10",
     "typescript": "^7.0.2"
   }

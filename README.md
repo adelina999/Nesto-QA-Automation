@@ -9,32 +9,49 @@ French UI coverage and API tests.
 - Internet access to the QA application (`https://app.qa.nesto.ca` by default)
 - Chrome is optional; install it to use the Chrome runner
 
-The project dependencies are installed through npm: Cypress, TypeScript,
+The project dependencies are installed through npm: Cypress, Mochawesome,
+`mochawesome-merge`, `mochawesome-report-generator`, TypeScript,
 `@faker-js/faker`, and `@types/node`.
 
 ## Install
 
 ```powershell
 npm ci
-npm run typecheck
+
 ```
 
 ## Run tests
 
 ```powershell
-npm test
-npm run typecheck
+npm run cy:run:spec -- --spec "e2e/tests/signUp.negative.cy.ts"
+npm run cy:run
 npm run cy:run:headed
-npm run cy:run:chrome
+npm run cy:run:headed:spec -- --spec "e2e/tests/signUp.negative.cy.ts"
 npm run cy:open
+
 ```
 
-Run an individual spec:
+Generate a merged Mochawesome report for a headless run only when requested:
 
 ```powershell
-npm run cy:run -- --spec "e2e/tests/signUp.negative.cy.ts"
-npm run cy:run -- --spec "e2e/tests/api/signUp.api.cy.ts"
+npm run cy:run:report -- --spec "e2e/tests/signUp.negative.cy.ts"
 ```
+
+Regular `cy:run`, `cy:run:spec`, `cy:run:headed`, and `npm test` commands invoke
+Cypress directly and do not generate Mochawesome reports.
+
+Choose a browser for a run or the interactive Cypress app:
+
+```powershell
+npm run cy:run:browser -- --browser chrome
+npm run cy:run:headed:spec -- --browser chrome --spec "e2e/tests/smoke.cy.ts"
+npm run cy:open:browser -- --browser chrome
+```
+
+The `cy:run:spec` and `cy:run:headed:spec` scripts accept Cypress CLI options
+after `--`; use `--spec` to select one spec file. The browser scripts accept
+Cypress browser names such as `chrome` or `edge`. `npm test` remains an alias
+for running all specs headlessly.
 
 The negative signup spec runs its validation cases in both English and French
 in one run. For specs that use the selected language, choose English (default)
@@ -72,7 +89,7 @@ e2e/
   tests/
     api/           Signup endpoint specs
     *.cy.ts        Signup UI, smoke, and request-recovery specs
-  reports/         Generated Mochawesome HTML reports (git-ignored)
+  reports/         Generated Mochawesome JSON and merged HTML reports (git-ignored)
   screenshots/     Screenshots from failed Cypress tests (git-ignored)
 ```
 
@@ -98,12 +115,14 @@ the other locale-sensitive specs use the selected language. Some negative
 scenarios are intended to expose known application/API validation issues and
 may fail against the current QA environment.
 
-Cypress writes timestamped HTML reports per spec to `e2e/reports/`, and failure
-screenshots to `e2e/screenshots/` when running locally. Reports are named with
-the run status and spec name. These output folders are ignored by Git; if they
-are hidden in VS Code, disable **Explorer: Exclude Git Ignore** or list reports
-in PowerShell:
+Cypress writes a JSON report per spec during headless runs, then merges those
+reports into one HTML report for that run. Each report is saved in its own
+timestamped folder under `e2e/reports/`. Headed runs use Cypress's spec reporter
+and do not generate Mochawesome reports. Failure screenshots are saved to
+`e2e/screenshots/`. These output folders are ignored by Git; if they are hidden
+in VS Code, disable **Explorer: Exclude Git Ignore** or list reports in
+PowerShell:
 
 ```powershell
-Get-ChildItem e2e\reports\*.html
+Get-ChildItem e2e\reports\*\report.html
 ```

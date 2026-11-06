@@ -7,12 +7,13 @@ export default defineConfig({
   screenshotOnRunFailure: true,
   screenshotsFolder: "e2e/screenshots",
   retries: { runMode: 2, openMode: 0 },
-  reporter: "mochawesome",
+  reporter: process.env["MOCHAWESOME_REPORT_DIR"] ? "mochawesome" : "spec",
   reporterOptions: {
-    reportDir: "e2e/reports",
+    reportDir: process.env["MOCHAWESOME_REPORT_DIR"] ?? "e2e/reports",
     reportFilename: "[status]-[datetime]-[name]",
-    html: true,
-    json: false,
+    overwrite: false,
+    html: false,
+    json: true,
   },
   e2e: {
     setupNodeEvents(_on, config) {
