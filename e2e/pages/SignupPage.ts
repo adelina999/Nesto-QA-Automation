@@ -125,6 +125,10 @@ export class SignupPage extends BasePage {
     return cy.getByTestId(this.selectors.headerLoginButton);
   }
 
+  openLogin(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return this.headerLoginButton().click();
+  }
+
   firstNameLabel(): Cypress.Chainable<JQuery<HTMLElement>> {
     return cy.get(this.selectors.firstNameLabel);
   }

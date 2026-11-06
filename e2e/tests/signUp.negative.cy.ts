@@ -68,6 +68,19 @@ const malformedEmails = [
   { name: "missing a top-level domain", email: "missing-tld@example" },
 ] as const;
 
+const invalidNameCases = [
+  {
+    name: "first name",
+    field: "firstName",
+    overrides: { firstName: "Jane123" },
+  },
+  {
+    name: "last name",
+    field: "lastName",
+    overrides: { lastName: "Smith123" },
+  },
+] as const;
+
 const visitSignupWithCreationGuard = (language: Language): SignupPage => {
   cy.intercept("POST", "**/api/accounts", (request) => {
     request.destroy();
@@ -110,6 +123,28 @@ const defineNegativeTestsForLanguage = (language: Language): void => {
         signupPage.submitSignup();
 
         assertValidationError(signupPage, field, error, language);
+        assertSubmissionWasBlocked(language);
+      },
+    );
+  });
+
+  invalidNameCases.forEach(({ name, field, overrides }) => {
+    it(
+      `rejects digits in the ${name} in ${locale.name} (${language})`,
+      { retries: 0 },
+      () => {
+        const signupPage = visitSignupWithCreationGuard(language);
+
+        signupPage.populateForm(createSignUpUserData(overrides));
+        signupPage.submitSignup();
+
+        signupPage
+          .validationMessage(field)
+          .should("be.visible")
+          .should(($message) => {
+            expect($message.text().trim(), `${name} validation message`).not.to
+              .equal("");
+          });
         assertSubmissionWasBlocked(language);
       },
     );

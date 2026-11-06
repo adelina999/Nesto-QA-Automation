@@ -2,6 +2,7 @@ import type {
   SignupCreationRequest,
   SignupCreationResponse,
 } from "../api/signup.api";
+import { LoginPage } from "../pages/LoginPage";
 import { SignupPage } from "../pages/SignupPage";
 import { getCanadianRegionOptions } from "../test-data/canadianRegions";
 import {
@@ -26,6 +27,15 @@ const formatCanadianPhoneNumber = (phone: string): string => {
 };
 
 const toCanadianE164PhoneNumber = (phone: string): string => `+1${phone}`;
+
+const getApplicationOrigin = (): string => {
+  const baseUrl = Cypress.config("baseUrl");
+  if (typeof baseUrl !== "string") {
+    throw new Error("Cypress baseUrl must be configured to verify login.");
+  }
+
+  return new URL(baseUrl).origin;
+};
 
 describe("Sign Up Positive Tests", () => {
   (["en", "fr"] as const satisfies readonly Language[]).forEach((language) => {
@@ -129,14 +139,21 @@ describe("Sign Up Positive Tests", () => {
         );
       });
 
-      //curently the API is returning a 201 with the same path as the signup page, but it should be returning a 302 redirect to the login page. This is a bug in the API that needs to be fixed.
+      //curently the API is returning a 201 with the same path as the signup page, but it is not being redirected tothe account page, so we can't verify the login,
+      // we will verify the login by opening the login page and logging in with the same credentials
+
       // cy.location("pathname").should("not.eq", locale.path);
       // cy.get("main").should("be.visible");
+
+      signupPage.visit();
+      signupPage.openLogin();
+      new LoginPage().loginWith(userData.email, userData.password);
+      cy.location("origin").should("eq", getApplicationOrigin());
     },
   );
 
   it(
-    "creates an account with French Faker data and an accented email in French (fr)",
+    "creates an account with French Faker data and an accented email in French (fr)/BUG if the email has accented email we get an error",
     { retries: 0 },
     () => {
       const userData = createFrenchSignUpUserData();
@@ -165,6 +182,11 @@ describe("Sign Up Positive Tests", () => {
         expect(request.body.email).to.equal(userData.email);
         expect(response.body.account.email).to.equal(userData.email);
       });
+
+      signupPage.visit();
+      signupPage.openLogin();
+      new LoginPage().loginWith(userData.email, userData.password);
+      cy.location("origin").should("eq", getApplicationOrigin());
     },
   );
 });

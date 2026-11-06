@@ -48,7 +48,6 @@ requirement, I label the expected behavior as an assumption to confirm.
 - Expected: make the test title say consent is omitted. Add explicit-null or
   false cases only if the API contract requires those distinctions.
 
-
 ## Reproduced application behavior — expected contract to confirm
 
 I reproduced the application behavior below. Existing Cypress reports provide
@@ -56,21 +55,128 @@ HTTP status evidence for the API cases noted. "Expected" describes my current
 assumption or the test's current expectation, not an approved contract unless
 I explicitly say otherwise.
 
-| ID / suggested priority | Actual behavior observed | Expected behavior / assumption |
-| --- | --- | --- |
-| APP-001 / P1 | API account creation returned HTTP 201 when `region` was omitted (existing API report). | Reject the request if province/region is required; the current test expects HTTP 400. Confirm the contract. |
-| APP-002 / P1 | API account creation returned HTTP 201 when `phone` was empty (existing API report). | Reject the request if phone is required; the current test expects HTTP 422. Confirm the contract. |
-| APP-003 / P1 | API account creation returned HTTP 201 when consent was omitted. The test is titled as a null case but deletes the property. | Reject omitted consent if it is required; the current test expects HTTP 422. Explicit `null` has not been tested. Confirm consent requirements. |
-| APP-004 / P1 | I reproduced no clear inline UI validation for invalid phone formats. The API report also shows HTTP 201 for a number longer than the ten-digit Canadian input. | I expect clear UI validation and API rejection of unsupported values. The current API test expects HTTP 422; I need to confirm the supported formats. |
-| APP-005 / P1 | After account creation succeeds, `POST /co/authenticate` returns HTTP 400 and I am no longer redirected to the account. The redirect used to work. I group these as one post-account-creation/authentication regression, separate from signup-form validation; I have not confirmed whether the 400 causes the redirect failure. | I expect the previously working behavior to be restored: authentication succeeds and I am redirected to my account. |
-| APP-006 / P1 | For duplicate email, I saw the API response `{"error":"bad format","description":"error creating account"}`. The UI displays a generic toast ("Something went wrong..."), not a clear inline email-field error. | I expect a clear duplicate-email error at the email field in the selected locale. I need the approved message confirmed. |
-| APP-007 / P2 | The UI accepts passwords longer than 32 characters; the form says passwords must be 12–32 characters. | Enforce the stated 32-character maximum in the UI. Confirm whether the API also needs a server-side limit. |
-| APP-008 / P2 | I reproduced the UI accepting email addresses longer than 32 characters. | I expect a 32-character email maximum if that is the product requirement; I need to confirm the limit. |
-| APP-009 / P1 | I reproduced the API allowing account creation without a country code. | I expect the API to require/validate a country code if mandatory; I need to confirm whether it is a separate field or part of the E.164 `phone` value. |
-| APP-010 / P2 suspected | I confirmed an email address with `+` before `@` is accepted, and I suspect this may violate the product's email rules. | I expect the application to follow the intended email-address policy. I need to confirm whether plus-addressing (for example, `name+tag@example.com`) is allowed before deciding whether this is a bug. |
-| APP-011 / P2 | I reproduced 400 and 500 failures showing no distinct, clear UI messages; the error appears in a generic toast. | I expect actionable messages appropriate to client errors versus server failures; I need to confirm the copy and error mapping. |
-| APP-012 / P2 | In French signup, I entered an email with an accented French character in its local part and saw the inline `Courriel invalide` validation error (see my screenshot). | I expect the address to be accepted if French/internationalized email local parts are supported. Otherwise, I expect the limitation to be documented and the validation message to be accurate. I need to confirm the supported email format with product/API. |
-| APP-013 / P2 suspected | I can enter spaces in all signup input fields. | I expect each field to handle spaces according to its purpose: trim surrounding whitespace where appropriate and reject whitespace-only or otherwise invalid values. I need to confirm the field-specific rules. |
-| APP-014 / P3 suspected | French signup uses `/fr/signup`, while English signup uses `/signup` without a locale prefix. | I propose using a consistent locale-prefixed route such as `/en/signup` for English, if that fits the product's URL and redirect conventions. |
-| APP-015 / P2 suspected | When I click the NESTO logo, nothing happens. | I expect the logo to navigate somewhere useful, likely the relevant home or account page. I need to confirm the intended destination. |
+### APP-001 / P1
 
+- **Actual:** API account creation returned HTTP 201 when `region` was omitted
+  (existing API report).
+- **Expected:** Reject the request if province/region is required; the current
+  test expects HTTP 400. Confirm the contract.
+
+### APP-002 / P1
+
+- **Actual:** API account creation returned HTTP 201 when `phone` was empty
+  (existing API report).
+- **Expected:** Reject the request if phone is required; the current test
+  expects HTTP 422. Confirm the contract.
+
+### APP-003 / P1
+
+- **Actual:** API account creation returned HTTP 201 when consent was omitted.
+  The test is titled as a null case but deletes the property.
+- **Expected:** Reject omitted consent if it is required; the current test
+  expects HTTP 422. Explicit `null` has not been tested. Confirm consent
+  requirements.
+
+### APP-004 / P1
+
+- **Actual:** I reproduced no clear inline UI validation for invalid phone
+  formats. The API report also shows HTTP 201 for a number longer than the
+  ten-digit Canadian input.
+- **Expected:** I expect clear UI validation and API rejection of unsupported
+  values. The current API test expects HTTP 422; I need to confirm the supported
+  formats.
+
+### APP-005 / P1
+
+- **Actual:** After account creation succeeds, `POST /co/authenticate` returns
+  HTTP 400 and I am no longer redirected to the account. The redirect used to
+  work. I group these as one post-account-creation/authentication regression,
+  separate from signup-form validation; I have not confirmed whether the 400
+  causes the redirect failure.
+- **Expected:** I expect the previously working behavior to be restored:
+  authentication succeeds and I am redirected to my account. I can login into
+  the creaed account by going to login page directly
+
+### APP-006 / P1
+
+- **Actual:** For duplicate email, I saw the API response
+  `{"error":"bad format","description":"error creating account"}`. The UI
+  displays a generic toast ("Something went wrong..."), not a clear inline
+  email-field error.
+- **Expected:** I expect a clear duplicate-email error at the email field in the
+  selected locale. I need the approved message confirmed.
+
+### APP-007 / P2
+
+- **Actual:** The UI accepts passwords longer than 32 characters; the form says
+  passwords must be 12–32 characters.
+- **Expected:** Enforce the stated 32-character maximum in the UI. Confirm
+  whether the API also needs a server-side limit.
+
+### APP-008 / P2
+
+- **Actual:** I reproduced the UI accepting email addresses longer than 32
+  characters.
+- **Expected:** I expect a 32-character email maximum if that is the product
+  requirement; I need to confirm the limit.
+
+### APP-009 / P1
+
+- **Actual:** I reproduced the API allowing account creation without a country
+  code.
+- **Expected:** I expect the API to require/validate a country code if
+  mandatory; I need to confirm whether it is a separate field or part of the
+  E.164 `phone` value.
+
+### APP-010 / P2 suspected
+
+- **Actual:** I confirmed an email address with `+` before `@` is accepted, and
+  I suspect this may violate the product's email rules.
+- **Expected:** I expect the application to follow the intended email-address
+  policy. I need to confirm whether plus-addressing (for example,
+  `name+tag@example.com`) is allowed before deciding whether this is a bug.
+
+### APP-011 / P2
+
+- **Actual:** I reproduced 400 and 500 failures showing no distinct, clear UI
+  messages; the error appears in a generic toast.
+- **Expected:** I expect actionable messages appropriate to client errors
+  versus server failures; I need to confirm the copy and error mapping.
+
+### APP-012 / P2
+
+- **Actual:** In French signup, I entered an email with an accented French
+  character in its local part and saw the inline `Courriel invalide` validation
+  error (see my screenshot).
+- **Expected:** I expect the address to be accepted if French/internationalized
+  email local parts are supported. Otherwise, I expect the limitation to be
+  documented and the validation message to be accurate. I need to confirm the
+  supported email format with product/API.
+
+### APP-013 / P2 suspected
+
+- **Actual:** I can enter spaces in all signup input fields.
+- **Expected:** I expect each field to handle spaces according to its purpose:
+  trim surrounding whitespace where appropriate and reject whitespace-only or
+  otherwise invalid values. I need to confirm the field-specific rules.
+
+### APP-014 / P3 suspected
+
+- **Actual:** French signup uses `/fr/signup`, while English signup uses
+  `/signup` without a locale prefix.
+- **Expected:** I propose using a consistent locale-prefixed route such as
+  `/en/signup` for English, if that fits the product's URL and redirect
+  conventions.
+
+### APP-015 / P2 suspected
+
+- **Actual:** When I click the NESTO logo, nothing happens.
+- **Expected:** I expect the logo to navigate somewhere useful, likely the
+  relevant home or account page. I need to confirm the intended destination.
+
+### APP-016 / P2 suspected
+
+- **Actual:** The signup page shows the hamburger menu on iPhone SE and iPhone 6
+  viewport sizes. The hamburger is absent on iPad mini and desktop viewport
+  sizes.
+- **Expected:** I would expect the hamburger menu to appear on ony device and any responsive site.
